@@ -1,4 +1,4 @@
-# Interview Mirror
+# Interview coach
 
 ## AI-Powered Interview Performance Analysis and Feedback System
 
