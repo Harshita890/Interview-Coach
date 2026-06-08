@@ -22,6 +22,7 @@ The platform helps students, job seekers, and professionals identify strengths a
 
 ### Communication Analysis
 - Measures speaking speed.
+- eye blinking.
 - Detects filler words such as:
   - Umm
   - Uh
