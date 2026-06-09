@@ -29,8 +29,7 @@ The platform helps students, job seekers, and professionals identify strengths a
   - Like
   - You know
   -aaaa
-  -yeah
-
+  
 ### Confidence Assessment
 - Analyzes voice characteristics.
 - Estimates confidence levels during responses.
