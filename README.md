@@ -1,6 +1,6 @@
 # Interview coach
 
-## AI-Powered Interview Performance Analysis and Feedback System
+##  Interview Performance Analysis and Feedback System
 
 Interview Mirror is an intelligent interview assessment platform that analyzes a candidate's interview performance using Artificial Intelligence. The system evaluates speech patterns, confidence level, communication skills, sentiment, speaking pace, and response quality to provide personalized feedback and improvement recommendations.
 
