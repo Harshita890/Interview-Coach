@@ -161,12 +161,4 @@ Interview-Mirror/
 
 ---
 
-## Author
-
-Harshita Gautam
-
-Final Year Student | Python Developer | Machine Learning Enthusiast
-
----
-
 Interview Mirror transforms interview practice into a data-driven learning experience by combining Artificial Intelligence, Natural Language Processing, and Speech Analytics to help candidates perform better in real-world interviews.
