@@ -29,6 +29,7 @@ The platform helps students, job seekers, and professionals identify strengths a
   - Like
   - You know
   -aaaa
+  -hmmmmm
   
 ### Confidence Assessment
 - Analyzes voice characteristics.
