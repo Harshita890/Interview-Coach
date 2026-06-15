@@ -25,7 +25,7 @@ The platform helps students, job seekers, and professionals identify strengths a
 - eye blinking.
 - Detects filler words such as:
   - Umm
-  - Uh
+  - Uhhhh
   - Like
   - You know
   -aaaa

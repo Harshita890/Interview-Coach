@@ -1,0 +1,18 @@
+[33mcommit e54458fc610d42bb5812f74c27b9406ccd17e8ad[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Harshita890 <harshita890gautam@gmail.com>
+Date:   Fri Jun 12 20:33:16 2026 +0530
+
+    updated
+
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 0b335df..3f0d166 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -29,6 +29,7 @@[m [mThe platform helps students, job seekers, and professionals identify strengths a[m
+   - Like[m
+   - You know[m
+   -aaaa[m
+[32m+[m[32m  -hmmmmm[m
+   [m
+ ### Confidence Assessment[m
+ - Analyzes voice characteristics.[m
