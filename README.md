@@ -1,155 +1,159 @@
-# Interview coach
+# Interview Mirror
 
-##  Interview Performance Analysis and Feedback System
+## AI-Based Interview Practice Platform
 
-Interview Mirror is an intelligent interview assessment platform that analyzes a candidate's interview performance using Artificial Intelligence. The system evaluates speech patterns, confidence level, communication skills, sentiment, speaking pace, and response quality to provide personalized feedback and improvement recommendations.
+Interview Mirror is an AI-powered interview practice and performance analysis platform. It helps candidates practice interview answers, analyze communication quality, measure confidence signals, detect filler words, understand sentiment, and receive personalized feedback for improvement.
 
----
+GitHub Repository: [Interview Coach](https://github.com/Harshita890/Interview-Coach)
 
 ## Project Overview
 
-Preparing for interviews can be challenging, and receiving objective feedback is often difficult. Interview Mirror acts as a virtual interview coach by analyzing recorded interview responses and generating detailed performance insights.
+Preparing for interviews can be difficult without proper feedback. Interview Mirror works like a virtual interview coach by analyzing recorded or written interview responses and generating useful performance insights.
 
-The platform helps students, job seekers, and professionals identify strengths and weaknesses in their interview skills, enabling them to improve communication and confidence before real interviews.
+This project is designed for students, job seekers, and professionals who want to improve their interview communication, reduce hesitation, and build confidence before real interviews.
 
----
+## Key Features
 
-## Features
+### AI-Based Interview Practice
+
+- Provides a platform for practicing interview responses.
+- Helps users evaluate answers before real interviews.
+- Gives improvement suggestions based on response quality.
 
 ### Speech-to-Text Conversion
-- Converts spoken interview responses into text.
-- Supports automatic transcription of interview recordings.
+
+- Supports interview recording upload.
+- Can be extended with Whisper for automatic transcription.
 
 ### Communication Analysis
+
 - Measures speaking speed.
-- eye blinking.
 - Detects filler words such as:
   - Umm
-  - Uhhhh
+  - Uh
   - Like
   - You know
-  -aaaa
-  
+
 ### Confidence Assessment
-- Analyzes voice characteristics.
-- Estimates confidence levels during responses.
+
+- Estimates confidence level using response clarity and hesitation signals.
+- Highlights areas where the candidate can sound more confident.
 
 ### Sentiment Analysis
-- Identifies positive, neutral, and negative sentiments.
-- Evaluates emotional tone during interviews.
+
+- Identifies positive, neutral, and negative tone.
+- Evaluates emotional quality of interview responses.
 
 ### Interview Scoring
-- Generates overall interview performance scores.
-- Provides category-wise evaluation.
+
+- Generates an overall interview performance score.
+- Provides category-wise scores for confidence, communication, sentiment, and response quality.
 
 ### Personalized Feedback
+
 - Highlights strengths.
 - Identifies improvement areas.
-- Suggests actionable recommendations.
+- Gives actionable recommendations.
 
 ### Performance Dashboard
-- Displays confidence, communication, and sentiment metrics.
-- Provides visual insights through charts and graphs.
 
----
+- Displays interview metrics visually.
+- Shows confidence, communication, sentiment, speech pace, and filler-word count.
 
 ## Technology Stack
 
 ### Frontend
+
 - HTML
 - CSS
 - JavaScript
 - Bootstrap
+- Chart.js
 
 ### Backend
+
 - Python
 - Flask
 
-### AI & Machine Learning
-- Scikit-learn
-- NLTK
-- Transformers
-- Whisper
+### AI and Machine Learning
 
-### Computer Vision (Optional)
-- OpenCV
-- MediaPipe
-
-### Data Visualization
-- Matplotlib
-- Plotly
+- Rule-based NLP analysis in the current version
+- Scikit-learn, NLTK, Transformers, and Whisper can be added for advanced analysis
 
 ### Database
-- SQLite / MySQL
 
----
+- SQLite or MySQL can be integrated for storing user history and interview reports
 
 ## System Workflow
 
-1. User uploads an interview recording.
-2. Audio is converted into text.
-3. NLP models analyze responses.
-4. Speech metrics are calculated.
-5. Sentiment and confidence scores are generated.
-6. AI evaluates overall performance.
-7. Dashboard displays feedback and recommendations.
-
----
+1. User uploads an interview recording or enters a transcript.
+2. The system processes the interview response.
+3. Communication metrics are calculated.
+4. Filler words, sentiment, confidence, and response quality are analyzed.
+5. Overall interview score is generated.
+6. Dashboard displays feedback and recommendations.
 
 ## Project Objectives
 
+- Create an AI-based interview practice platform.
 - Improve interview preparation.
-- Provide objective performance evaluation.
-- Enhance communication skills.
-- Reduce interview anxiety through practice.
-- Deliver AI-driven insights for career development.
-
----
+- Provide objective performance feedback.
+- Help candidates improve communication skills.
+- Reduce interview anxiety through repeated practice.
+- Deliver data-driven interview improvement suggestions.
 
 ## Future Enhancements
 
-- Real-time interview analysis.
+- Real-time interview practice.
+- AI-generated mock interview questions.
+- Whisper-based automatic speech-to-text.
 - Facial expression recognition.
-- Eye-contact tracking.
+- Eye contact tracking.
 - Emotion detection.
 - Resume analysis integration.
-- AI-generated mock interview questions.
-- Multilingual support.
-
----
+- User login and interview history.
+- Multilingual interview support.
 
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/interview-mirror.git
-
-cd interview-mirror
-
+git clone https://github.com/Harshita890/Interview-Coach.git
+cd Interview-Coach
 pip install -r requirements.txt
-
 python app.py
+```
+
+Open the app in your browser:
+
+```text
+http://127.0.0.1:5000
 ```
 
 ## Project Structure
 
 ```plaintext
-Interview-Mirror/
-│
-├── app.py
-├── models/
-├── dataset/
-├── static/
-│   ├── css/
-│   └── js/
-│
-├── templates/
-│   ├── index.html
-│   └── dashboard.html
-│
-├── uploads/
-├── notebooks/
-├── requirements.txt
-└── README.md
+Interview-Coach/
+|
+|-- app.py
+|-- models/
+|   |-- analyzer.py
+|-- dataset/
+|   |-- .gitkeep
+|-- static/
+|   |-- css/
+|   |   |-- style.css
+|   |-- js/
+|       |-- dashboard.js
+|-- templates/
+|   |-- index.html
+|   |-- dashboard.html
+|-- uploads/
+|   |-- .gitkeep
+|-- notebooks/
+|   |-- .gitkeep
+|-- requirements.txt
+|-- .gitignore
+`-- README.md
 ```
 
 ## Expected Outcomes
@@ -158,6 +162,13 @@ Interview-Mirror/
 - Improved communication confidence.
 - Personalized learning experience.
 - Data-driven interview improvement strategies.
+- A practical AI-based interview practice platform for career preparation.
+
+## Author
+
+**Harshita Gautam**
+
+Final Year Student | Python Developer | Machine Learning Enthusiast
 
 ---
 
