@@ -11,7 +11,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-ink">
       <div class="container">
         <a class="navbar-brand fw-semibold" href="{{ url_for('index') }}">Interview Mirror</a>
-        <a class="btn btn-outline-light btn-sm" href="{{ url_for('dashboard') }}">Dashboard</a>
+        <div class="d-flex gap-2">
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('practice') }}">AI Practice</a>
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('dashboard') }}">Dashboard</a>
+        </div>
       </div>
     </nav>
 
@@ -27,9 +30,13 @@
             </p>
             <div class="d-flex gap-3 flex-wrap">
               <span class="metric-chip">AI Practice</span>
+              <span class="metric-chip">AI Interviewer</span>
               <span class="metric-chip">Speech Metrics</span>
               <span class="metric-chip">Confidence Score</span>
               <span class="metric-chip">Personal Feedback</span>
+            </div>
+            <div class="mt-4">
+              <a class="btn btn-primary btn-lg" href="{{ url_for('practice') }}">Start AI Interview Practice</a>
             </div>
           </div>
           <div class="col-lg-6">

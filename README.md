@@ -4,7 +4,9 @@
 
 Interview Mirror is an AI-powered interview practice and performance analysis platform. It helps candidates practice interview answers, analyze communication quality, measure confidence signals, detect filler words, understand sentiment, and receive personalized feedback for improvement.
 
+The project also includes an **AI Interviewer Practice Model** where the AI asks role-based interview questions, accepts the candidate's answer, reviews the response, gives a practice score, and suggests how to improve the next answer.
 
+Project Link: [https://github.com/Harshita890/Interview-Coach](https://github.com/Harshita890/Interview-Coach)
 
 ## Project Overview
 
@@ -17,6 +19,9 @@ This project is designed for students, job seekers, and professionals who want t
 ### AI-Based Interview Practice
 
 - Provides a platform for practicing interview responses.
+- AI interviewer asks role-based questions.
+- Candidate can answer the AI interview question directly in the app.
+- AI model reviews the answer and gives performance feedback.
 - Helps users evaluate answers before real interviews.
 - Gives improvement suggestions based on response quality.
 
@@ -93,6 +98,12 @@ This project is designed for students, job seekers, and professionals who want t
 5. Overall interview score is generated.
 6. Dashboard displays feedback and recommendations.
 
+## AI Interviewer Practice Model
+
+The AI interviewer practice model is available at `/practice`. It works as a mock interview space where a candidate selects a role and difficulty level, receives an AI-generated interview question, types an answer, and gets instant performance feedback.
+
+The current model is rule-based so the project can run without an external API key. It can later be upgraded with OpenAI, Transformers, or another LLM for more advanced question generation and feedback.
+
 ## Project Objectives
 
 - Create an AI-based interview practice platform.
@@ -129,6 +140,12 @@ Open the app in your browser:
 http://127.0.0.1:5000
 ```
 
+AI interview practice page:
+
+```text
+http://127.0.0.1:5000/practice
+```
+
 ## Project Structure
 
 ```plaintext
@@ -137,6 +154,7 @@ Interview-Coach/
 |-- app.py
 |-- models/
 |   |-- analyzer.py
+|   |-- ai_interviewer.py
 |-- dataset/
 |   |-- .gitkeep
 |-- static/
@@ -147,6 +165,7 @@ Interview-Coach/
 |-- templates/
 |   |-- index.html
 |   |-- dashboard.html
+|   |-- practice.html
 |-- uploads/
 |   |-- .gitkeep
 |-- notebooks/
