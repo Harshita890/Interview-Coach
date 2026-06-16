@@ -1,0 +1,172 @@
+:root {
+  --ink: #19222d;
+  --blue: #2563eb;
+  --green: #0f9f6e;
+  --amber: #d97706;
+  --paper: #f5f7fb;
+  --line: #dbe2ef;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.bg-ink {
+  background: var(--ink);
+}
+
+.hero {
+  min-height: calc(100vh - 56px);
+  padding: 64px 0;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard {
+  padding: 40px 0 64px;
+}
+
+.eyebrow {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.panel,
+.stat-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(25, 34, 45, 0.08);
+}
+
+.panel {
+  padding: 24px;
+}
+
+.metric-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 5px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #465468;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+.score-badge {
+  min-width: 132px;
+  padding: 16px 18px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #ffffff;
+  text-align: center;
+}
+
+.score-badge span {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.score-badge small {
+  color: #c9d3e1;
+}
+
+.stat-card {
+  padding: 20px;
+}
+
+.stat-card span {
+  display: block;
+  min-height: 36px;
+  color: var(--blue);
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1.15;
+  word-break: break-word;
+}
+
+.stat-card p {
+  margin: 8px 0 0;
+  color: #667085;
+  font-weight: 600;
+}
+
+.metric-list {
+  margin: 0;
+}
+
+.metric-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.metric-list div:last-child {
+  border-bottom: 0;
+}
+
+.metric-list dt {
+  color: #667085;
+  font-weight: 600;
+}
+
+.metric-list dd {
+  margin: 0;
+  font-weight: 800;
+}
+
+.filler-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.insight-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.insight-list li {
+  padding-left: 4px;
+}
+
+.transcript {
+  color: #465468;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 575px) {
+  .hero,
+  .dashboard {
+    padding: 28px 0;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .display-5 {
+    font-size: 2rem;
+  }
+}
