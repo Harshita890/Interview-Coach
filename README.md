@@ -4,7 +4,7 @@
 
 Interview Mirror is an AI-powered interview practice and performance analysis platform. It helps candidates practice interview answers, analyze communication quality, measure confidence signals, detect filler words, understand sentiment, and receive personalized feedback for improvement.
 
-GitHub Repository: [Interview Coach](https://github.com/Harshita890/Interview-Coach)
+
 
 ## Project Overview
 
