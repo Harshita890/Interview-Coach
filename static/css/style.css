@@ -156,6 +156,23 @@ body {
   white-space: pre-wrap;
 }
 
+.video-recorder {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #f8fafc;
+}
+
+.video-preview {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #111827;
+  object-fit: cover;
+}
+
 @media (max-width: 575px) {
   .hero,
   .dashboard {

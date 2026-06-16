@@ -32,14 +32,21 @@ class AIInterviewPracticeModel:
         question_index = role_score % len(questions)
         return questions[question_index].format(role=role)
 
-    def review_answer(self, question, answer, candidate_name, role, difficulty):
+    def review_answer(self, question, answer, candidate_name, role, difficulty, video_filename=None):
+        answer_text = answer.strip()
+        if not answer_text:
+            answer_text = (
+                "Video response submitted for AI interview practice. Add Whisper transcription "
+                "to automatically convert the spoken answer into text for deeper scoring."
+            )
+
         analysis = analyze_interview(
-            transcript=answer,
+            transcript=answer_text,
             candidate_name=candidate_name,
             role=role,
             duration_minutes=None,
         )
-        model_feedback = self._model_feedback(answer, analysis["metrics"]["response_quality"])
+        model_feedback = self._model_feedback(answer_text, analysis["metrics"]["response_quality"], video_filename)
         next_question = self._next_question(role, difficulty, question)
 
         return {
@@ -47,7 +54,8 @@ class AIInterviewPracticeModel:
             "role": role,
             "difficulty": difficulty,
             "question": question,
-            "answer": answer,
+            "answer": answer_text,
+            "video_filename": video_filename,
             "analysis": analysis,
             "model_feedback": model_feedback,
             "next_question": next_question,
@@ -61,9 +69,12 @@ class AIInterviewPracticeModel:
             return formatted_questions[(current_index + 1) % len(formatted_questions)]
         return formatted_questions[0]
 
-    def _model_feedback(self, answer, response_quality):
+    def _model_feedback(self, answer, response_quality, video_filename=None):
         lowered = answer.lower()
         feedback = []
+
+        if video_filename:
+            feedback.append("Video response received. Review your recording for posture, eye contact, clarity, and confidence.")
 
         if response_quality >= 75:
             feedback.append("Your answer has good detail and gives the interviewer enough context.")

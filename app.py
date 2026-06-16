@@ -1,7 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.utils import secure_filename
 
 from models.analyzer import analyze_interview
@@ -26,6 +26,19 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def save_recording(file_storage):
+    if not file_storage or not file_storage.filename:
+        return None
+
+    if not allowed_file(file_storage.filename):
+        return None
+
+    original_name = secure_filename(file_storage.filename)
+    saved_filename = f"{uuid4().hex}_{original_name}"
+    file_storage.save(app.config["UPLOAD_FOLDER"] / saved_filename)
+    return saved_filename
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -46,9 +59,7 @@ def index():
                 flash("Please upload an audio or video file in a supported format.", "danger")
                 return redirect(url_for("index"))
 
-            original_name = secure_filename(recording.filename)
-            saved_filename = f"{uuid4().hex}_{original_name}"
-            recording.save(app.config["UPLOAD_FOLDER"] / saved_filename)
+            saved_filename = save_recording(recording)
 
         if not transcript and not saved_filename:
             flash("Add a transcript or upload a recording to analyze.", "warning")
@@ -84,13 +95,15 @@ def practice():
         role = request.form.get("role", "").strip() or "General Interview"
         difficulty = request.form.get("difficulty", "Beginner")
         question = request.form.get("question", "").strip()
-        answer = request.form.get("answer", "").strip()
+        transcript = request.form.get("transcript", "").strip()
+        video_response = request.files.get("video_response")
+        saved_video = save_recording(video_response)
 
         if not question:
             question = interview_model.generate_question(role=role, difficulty=difficulty)
 
-        if not answer:
-            flash("Write your answer so the AI interviewer can review it.", "warning")
+        if not saved_video and not transcript:
+            flash("Record or upload a video response before submitting to the AI interviewer.", "warning")
             return render_template(
                 "practice.html",
                 candidate_name=candidate_name,
@@ -101,10 +114,11 @@ def practice():
 
         practice_result = interview_model.review_answer(
             question=question,
-            answer=answer,
+            answer=transcript,
             candidate_name=candidate_name,
             role=role,
             difficulty=difficulty,
+            video_filename=saved_video,
         )
         return render_template("practice.html", result=practice_result)
 
@@ -119,6 +133,11 @@ def practice():
         difficulty="Beginner",
         question=starter_question,
     )
+
+
+@app.route("/uploads/<path:filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 @app.route("/reset")
