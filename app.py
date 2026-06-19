@@ -1,7 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
-from flask import Flask, flash, redirect, render_template, request, send_from_directory, session, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.utils import secure_filename
 
 from models.analyzer import analyze_interview
@@ -132,6 +132,19 @@ def practice():
         role="Python Developer",
         difficulty="Beginner",
         question=starter_question,
+    )
+
+
+@app.route("/practice/question")
+def practice_question():
+    role = request.args.get("role", "General Interview").strip() or "General Interview"
+    difficulty = request.args.get("difficulty", "Beginner").strip() or "Beginner"
+    return jsonify(
+        {
+            "question": interview_model.generate_question(role=role, difficulty=difficulty),
+            "role": role,
+            "difficulty": difficulty,
+        }
     )
 
 

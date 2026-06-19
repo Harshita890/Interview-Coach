@@ -20,14 +20,22 @@
 
     <main class="dashboard">
       <div class="container">
+        <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-4">
+          <div>
+            <p class="eyebrow mb-2">Real-time AI interviewer</p>
+            <h1 class="h2 mb-1">Live video interview practice.</h1>
+            <p class="text-muted mb-0">
+              The AI asks the question aloud, records the student on camera, captures answer notes in real time, and reviews the response.
+            </p>
+          </div>
+          <div class="interview-status" id="interviewStatus">
+            <span class="status-dot"></span>
+            <span id="statusText">Ready</span>
+          </div>
+        </div>
+
         <div class="row g-4">
           <div class="col-lg-5">
-            <p class="eyebrow mb-2">Video-based AI interviewer</p>
-            <h1 class="h2 mb-3">Practice your interview on camera.</h1>
-            <p class="text-muted">
-              The AI interviewer asks a role-based question, records your video response,
-              reviews performance, and suggests how to improve the next attempt.
-            </p>
             <section class="panel">
               <h2 class="h5 mb-3">Interview Setup</h2>
 
@@ -63,24 +71,40 @@
                     <textarea class="form-control" id="question" name="question" rows="3">{{ result.next_question if result else question }}</textarea>
                   </div>
                   <div class="col-12">
-                    <label class="form-label" for="cameraPreview">Video Response</label>
+                    <div class="d-flex gap-2 flex-wrap">
+                      <button class="btn btn-primary" id="startInterviewButton" type="button">Start Live Interview</button>
+                      <button class="btn btn-outline-primary" id="askQuestionButton" type="button">Ask Question</button>
+                      <button class="btn btn-outline-secondary" id="newQuestionButton" type="button">New Question</button>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="cameraPreview">Student Video Response</label>
                     <div class="video-recorder">
-                      <video id="cameraPreview" class="video-preview" autoplay muted playsinline></video>
+                      <div class="video-stage">
+                        <video id="cameraPreview" class="video-preview" autoplay muted playsinline></video>
+                        <div class="recording-pill d-none" id="recordingPill">
+                          <span class="status-dot"></span>
+                          <span id="recordingTimer">00:00</span>
+                        </div>
+                      </div>
                       <video id="recordedPreview" class="video-preview d-none" controls></video>
                       <div class="d-flex gap-2 flex-wrap mt-3">
                         <button class="btn btn-outline-primary" id="startCameraButton" type="button">Start Camera</button>
-                        <button class="btn btn-outline-danger" id="startRecordingButton" type="button" disabled>Record</button>
-                        <button class="btn btn-outline-secondary" id="stopRecordingButton" type="button" disabled>Stop</button>
+                        <button class="btn btn-outline-danger" id="startRecordingButton" type="button" disabled>Record Answer</button>
+                        <button class="btn btn-outline-secondary" id="stopRecordingButton" type="button" disabled>Stop Answer</button>
                       </div>
                     </div>
                     <input class="form-control mt-3" id="video_response" name="video_response" type="file" accept="video/*">
                   </div>
                   <div class="col-12">
-                    <label class="form-label" for="transcript">Optional Spoken Answer Notes</label>
-                    <textarea class="form-control" id="transcript" name="transcript" rows="4" placeholder="Optional: add a short transcript if you want text-based speech scoring too."></textarea>
+                    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                      <label class="form-label mb-0" for="transcript">Live Answer Notes</label>
+                      <span class="small text-muted" id="speechSupportText">Speech capture checks when interview starts.</span>
+                    </div>
+                    <textarea class="form-control mt-2" id="transcript" name="transcript" rows="5" placeholder="The student's spoken answer appears here in supported browsers. You can also type corrections before submitting."></textarea>
                   </div>
                   <div class="col-12 d-grid">
-                    <button class="btn btn-primary btn-lg" type="submit">Submit Video to AI</button>
+                    <button class="btn btn-primary btn-lg" id="submitPracticeButton" type="submit">Submit Response for AI Review</button>
                   </div>
                 </div>
               </form>
@@ -162,10 +186,10 @@
               </div>
             {% else %}
               <section class="panel h-100">
-                <p class="eyebrow mb-2">Ready question</p>
+                <p class="eyebrow mb-2">Live prompt</p>
                 <h2 class="h4 mb-3">{{ question }}</h2>
                 <p class="text-muted mb-0">
-                  Record or upload your video response on the left and submit it to get AI-based interview feedback.
+                  Start the live interview on the left. The AI voice will ask this question, then the student answers on camera in real time.
                 </p>
               </section>
             {% endif %}

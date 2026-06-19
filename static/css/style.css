@@ -86,6 +86,29 @@ body {
   color: #c9d3e1;
 }
 
+.interview-status,
+.recording-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #465468;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(15, 159, 110, 0.12);
+}
+
 .stat-card {
   padding: 20px;
 }
@@ -161,6 +184,24 @@ body {
   border-radius: 8px;
   padding: 14px;
   background: #f8fafc;
+}
+
+.video-stage {
+  position: relative;
+}
+
+.recording-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(17, 24, 39, 0.86);
+  color: #ffffff;
+}
+
+.recording-pill .status-dot {
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.18);
 }
 
 .video-preview {
