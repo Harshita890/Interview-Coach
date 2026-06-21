@@ -189,6 +189,34 @@ https://your-public-url/practice
 
 Note: camera and microphone features require HTTPS on public websites. Render and most modern hosts provide HTTPS automatically.
 
+### Hostinger Deployment
+
+Yes, this project can be hosted on Hostinger, but use **Hostinger VPS** for the best result. This is a Flask application, so it needs a Python server running continuously. Normal shared web hosting is usually meant for static files, PHP, or WordPress and may not run this Flask backend properly.
+
+Recommended Hostinger setup:
+
+```text
+Hosting type: Hostinger VPS
+Operating system: Ubuntu
+Python app server: Gunicorn
+Reverse proxy: Nginx
+HTTPS: Hostinger SSL or Let's Encrypt
+```
+
+Basic VPS commands after uploading the project:
+
+```bash
+cd /path/to/project
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+gunicorn app:app --bind 0.0.0.0:8000
+```
+
+Then connect your domain to the VPS and configure Nginx to forward public traffic to port `8000`.
+
+Important: camera and microphone recording need HTTPS in public browsers, so make sure SSL is enabled for your Hostinger domain.
+
 ## Project Structure
 
 ```plaintext
