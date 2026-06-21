@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from uuid import uuid4
 
@@ -14,7 +15,7 @@ ALLOWED_EXTENSIONS = {"mp3", "wav", "m4a", "ogg", "webm", "mp4", "mov"}
 
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "interview-mirror-dev-key"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "interview-mirror-dev-key")
 app.config["UPLOAD_FOLDER"] = UPLOAD_DIR
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 
@@ -160,4 +161,6 @@ def reset():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+    app.run(host="0.0.0.0", port=port, debug=debug)

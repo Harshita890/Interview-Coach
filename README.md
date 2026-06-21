@@ -145,6 +145,50 @@ AI interview practice page:
 http://127.0.0.1:5000/practice
 ```
 
+## Deploy as a Public Website
+
+This project is ready to deploy on Python web hosts such as Render, Railway, or Heroku-style platforms. The deployment files are included:
+
+- `Procfile` starts the app with Gunicorn.
+- `render.yaml` gives Render the build and start commands.
+- `requirements.txt` includes Flask, Werkzeug, and Gunicorn.
+- `app.py` reads the host-provided `PORT` and `SECRET_KEY`.
+
+### Render Manual Deployment
+
+1. Create a Render account.
+2. Create a new Web Service.
+3. Upload or connect this project repository.
+4. Use these settings if Render does not detect them automatically:
+
+```text
+Environment: Python
+Build Command: pip install -r requirements.txt
+Start Command: gunicorn app:app
+```
+
+5. Add an environment variable:
+
+```text
+SECRET_KEY=choose-any-long-random-text
+```
+
+6. Deploy the service.
+
+After deployment, Render will give a public URL like:
+
+```text
+https://interview-mirror.onrender.com
+```
+
+The AI practice page will be available at:
+
+```text
+https://your-public-url/practice
+```
+
+Note: camera and microphone features require HTTPS on public websites. Render and most modern hosts provide HTTPS automatically.
+
 ## Project Structure
 
 ```plaintext
@@ -170,6 +214,8 @@ Interview-Coach/
 |   |-- .gitkeep
 |-- notebooks/
 |   |-- .gitkeep
+|-- Procfile
+|-- render.yaml
 |-- requirements.txt
 |-- .gitignore
 `-- README.md
