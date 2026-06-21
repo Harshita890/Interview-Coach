@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 
 from models.analyzer import analyze_interview
 from models.ai_interviewer import AIInterviewPracticeModel
+from models.site_content import DIFFICULTIES, HOME_CONTENT, PRACTICE_DEFAULTS, SAMPLE_TRANSCRIPTS, get_sample_transcript
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -76,7 +77,7 @@ def index():
         session["analysis"] = result
         return redirect(url_for("dashboard"))
 
-    return render_template("index.html")
+    return render_template("index.html", home=HOME_CONTENT, sample_keys=SAMPLE_TRANSCRIPTS.keys())
 
 
 @app.route("/dashboard")
@@ -91,6 +92,11 @@ def dashboard():
 
 @app.route("/practice", methods=["GET", "POST"])
 def practice():
+    practice_context = {
+        "difficulties": DIFFICULTIES,
+        "defaults": PRACTICE_DEFAULTS,
+    }
+
     if request.method == "POST":
         candidate_name = request.form.get("candidate_name", "").strip() or "Candidate"
         role = request.form.get("role", "").strip() or "General Interview"
@@ -107,6 +113,7 @@ def practice():
             flash("Record or upload a video response before submitting to the AI interviewer.", "warning")
             return render_template(
                 "practice.html",
+                **practice_context,
                 candidate_name=candidate_name,
                 role=role,
                 difficulty=difficulty,
@@ -121,17 +128,18 @@ def practice():
             difficulty=difficulty,
             video_filename=saved_video,
         )
-        return render_template("practice.html", result=practice_result)
+        return render_template("practice.html", result=practice_result, **practice_context)
 
     starter_question = interview_model.generate_question(
-        role="Python Developer",
-        difficulty="Beginner",
+        role=PRACTICE_DEFAULTS["role"],
+        difficulty=PRACTICE_DEFAULTS["difficulty"],
     )
     return render_template(
         "practice.html",
-        candidate_name="Harshita Gautam",
-        role="Python Developer",
-        difficulty="Beginner",
+        **practice_context,
+        candidate_name=PRACTICE_DEFAULTS["candidate_name"],
+        role=PRACTICE_DEFAULTS["role"],
+        difficulty=PRACTICE_DEFAULTS["difficulty"],
         question=starter_question,
     )
 
@@ -147,6 +155,11 @@ def practice_question():
             "difficulty": difficulty,
         }
     )
+
+
+@app.route("/sample-answer/<sample_key>")
+def sample_answer(sample_key):
+    return jsonify({"transcript": get_sample_transcript(sample_key)})
 
 
 @app.route("/uploads/<path:filename>")

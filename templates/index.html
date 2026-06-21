@@ -22,18 +22,21 @@
       <div class="container">
         <div class="row align-items-center g-5">
           <div class="col-lg-6">
-            <p class="eyebrow mb-2">AI-based interview practice platform</p>
-            <h1 class="display-5 fw-bold mb-3">Practice interviews and improve with smart performance feedback.</h1>
-            <p class="lead text-muted mb-4">
-              Upload a recording or paste a transcript to evaluate speaking pace, filler words,
-              sentiment, confidence, response quality, and overall interview readiness.
-            </p>
+            <p class="eyebrow mb-2">{{ home.eyebrow }}</p>
+            <h1 class="display-5 fw-bold mb-3">{{ home.title }}</h1>
+            <p class="lead text-muted mb-4">{{ home.summary }}</p>
             <div class="d-flex gap-3 flex-wrap">
-              <span class="metric-chip">AI Practice</span>
-              <span class="metric-chip">AI Interviewer</span>
-              <span class="metric-chip">Speech Metrics</span>
-              <span class="metric-chip">Confidence Score</span>
-              <span class="metric-chip">Personal Feedback</span>
+              {% for chip in home.chips %}
+                <span class="metric-chip">{{ chip }}</span>
+              {% endfor %}
+            </div>
+            <div class="hero-stats mt-4">
+              {% for stat in home.stats %}
+                <div>
+                  <strong>{{ stat.value }}</strong>
+                  <span>{{ stat.label }}</span>
+                </div>
+              {% endfor %}
             </div>
             <div class="mt-4">
               <a class="btn btn-primary btn-lg" href="{{ url_for('practice') }}">Start AI Interview Practice</a>
@@ -70,7 +73,15 @@
                     <input class="form-control" id="recording" name="recording" type="file" accept="audio/*,video/*">
                   </div>
                   <div class="col-12">
-                    <label class="form-label" for="transcript">Transcript</label>
+                    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                      <label class="form-label mb-0" for="transcript">Transcript</label>
+                      <span class="small text-muted" id="transcriptCount">0 words</span>
+                    </div>
+                    <div class="quick-samples my-2">
+                      {% for key in sample_keys %}
+                        <button class="btn btn-outline-secondary btn-sm sample-answer-button" type="button" data-sample="{{ key }}">{{ key|title }} sample</button>
+                      {% endfor %}
+                    </div>
                     <textarea class="form-control" id="transcript" name="transcript" rows="7" placeholder="Paste the candidate response here..."></textarea>
                   </div>
                   <div class="col-12 d-grid">
@@ -83,5 +94,6 @@
         </div>
       </div>
     </main>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
   </body>
 </html>

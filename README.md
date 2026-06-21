@@ -226,21 +226,19 @@ Interview-Coach/
 |-- models/
 |   |-- analyzer.py
 |   |-- ai_interviewer.py
-|-- dataset/
-|   |-- .gitkeep
+|   |-- site_content.py
 |-- static/
 |   |-- css/
 |   |   |-- style.css
 |   |-- js/
 |       |-- dashboard.js
+|       |-- home.js
 |       |-- video_practice.js
 |-- templates/
 |   |-- index.html
 |   |-- dashboard.html
 |   |-- practice.html
 |-- uploads/
-|   |-- .gitkeep
-|-- notebooks/
 |   |-- .gitkeep
 |-- Procfile
 |-- render.yaml

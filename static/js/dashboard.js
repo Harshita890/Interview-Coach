@@ -16,7 +16,7 @@ if (chartNode && window.Chart) {
         {
           label: "Score",
           data: scores,
-          backgroundColor: ["#2563eb", "#0f9f6e", "#d97706", "#7c3aed"],
+          backgroundColor: ["#facc15", "#22c55e", "#fde68a", "#15803d"],
           borderRadius: 6,
         },
       ],

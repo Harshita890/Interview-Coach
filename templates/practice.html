@@ -61,7 +61,7 @@
                     <label class="form-label" for="difficulty">Difficulty</label>
                     <select class="form-select" id="difficulty" name="difficulty">
                       {% set active_difficulty = result.difficulty if result else difficulty %}
-                      {% for level in ["Beginner", "Intermediate", "Advanced"] %}
+                      {% for level in difficulties %}
                         <option value="{{ level }}" {% if active_difficulty == level %}selected{% endif %}>{{ level }}</option>
                       {% endfor %}
                     </select>
