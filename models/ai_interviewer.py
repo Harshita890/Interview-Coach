@@ -1,3 +1,5 @@
+import random
+
 from models.analyzer import analyze_interview
 
 
@@ -28,9 +30,7 @@ class AIInterviewPracticeModel:
 
     def generate_question(self, role, difficulty):
         questions = self.question_bank.get(difficulty, self.question_bank["Beginner"])
-        role_score = sum(ord(char) for char in role.lower())
-        question_index = role_score % len(questions)
-        return questions[question_index].format(role=role)
+        return random.choice(questions).format(role=role)
 
     def review_answer(self, question, answer, candidate_name, role, difficulty, video_filename=None):
         answer_text = answer.strip()

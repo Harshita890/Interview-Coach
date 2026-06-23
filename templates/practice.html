@@ -67,14 +67,17 @@
                     </select>
                   </div>
                   <div class="col-12">
-                    <label class="form-label" for="question">AI Interview Question</label>
-                    <textarea class="form-control" id="question" name="question" rows="3">{{ result.next_question if result else question }}</textarea>
+                    <input id="question" name="question" type="hidden" value="{{ result.next_question if result else question }}">
+                    <div class="live-question-card" aria-live="polite">
+                      <span class="eyebrow d-block mb-2">AI voice prompt</span>
+                      <p class="live-question-text mb-0" id="liveQuestionText">{{ result.next_question if result else question }}</p>
+                    </div>
                   </div>
                   <div class="col-12">
                     <div class="d-flex gap-2 flex-wrap">
                       <button class="btn btn-primary" id="startInterviewButton" type="button">Start Live Interview</button>
-                      <button class="btn btn-outline-primary" id="askQuestionButton" type="button">Ask Question</button>
-                      <button class="btn btn-outline-secondary" id="newQuestionButton" type="button">New Question</button>
+                      <button class="btn btn-outline-primary" id="askQuestionButton" type="button">Speak Question</button>
+                      <button class="btn btn-outline-secondary" id="newQuestionButton" type="button">New Spoken Question</button>
                     </div>
                   </div>
                   <div class="col-12">

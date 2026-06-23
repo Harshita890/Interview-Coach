@@ -2,6 +2,7 @@ const form = document.getElementById("videoPracticeForm");
 const roleInput = document.getElementById("role");
 const difficultyInput = document.getElementById("difficulty");
 const questionInput = document.getElementById("question");
+const liveQuestionText = document.getElementById("liveQuestionText");
 const transcriptInput = document.getElementById("transcript");
 const cameraPreview = document.getElementById("cameraPreview");
 const recordedPreview = document.getElementById("recordedPreview");
@@ -28,6 +29,13 @@ let finalTranscript = "";
 let timerId = null;
 let recordingStartedAt = null;
 let pendingSubmitAfterStop = false;
+
+function setQuestion(question) {
+  questionInput.value = question;
+  if (liveQuestionText) {
+    liveQuestionText.textContent = question;
+  }
+}
 
 function setStatus(message) {
   if (statusText) {
@@ -220,7 +228,7 @@ function speakQuestion({ onEnd } = {}) {
   window.speechSynthesis.speak(utterance);
 }
 
-async function loadNewQuestion() {
+async function loadNewQuestion({ speakAfterLoad = false } = {}) {
   const params = new URLSearchParams({
     role: roleInput.value || "General Interview",
     difficulty: difficultyInput.value || "Beginner",
@@ -233,8 +241,11 @@ async function loadNewQuestion() {
   }
 
   const data = await response.json();
-  questionInput.value = data.question;
+  setQuestion(data.question);
   setStatus("Question ready");
+  if (speakAfterLoad) {
+    speakQuestion();
+  }
   return data.question;
 }
 
@@ -246,6 +257,7 @@ async function startLiveInterview() {
   transcriptInput.value = "";
   finalTranscript = "";
   videoInput.value = "";
+  await loadNewQuestion();
   speakQuestion({ onEnd: startRecording });
 }
 
@@ -266,10 +278,18 @@ startInterviewButton?.addEventListener("click", () => {
   });
 });
 newQuestionButton?.addEventListener("click", () => {
-  loadNewQuestion().catch(() => {
+  loadNewQuestion({ speakAfterLoad: true }).catch(() => {
     alert("The app could not load a new question. You can edit the question manually.");
     setStatus("Question unchanged");
   });
+});
+
+roleInput?.addEventListener("change", () => {
+  loadNewQuestion().catch(() => setStatus("Question unchanged"));
+});
+
+difficultyInput?.addEventListener("change", () => {
+  loadNewQuestion().catch(() => setStatus("Question unchanged"));
 });
 
 form?.addEventListener("submit", (event) => {
