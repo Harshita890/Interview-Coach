@@ -127,7 +127,6 @@ The current model is rule-based so the project can run without an external API k
 ## Installation
 
 ```bash
-git clone https://github.com/Harshita890/Interview-Coach.git
 cd Interview-Coach
 pip install -r requirements.txt
 python app.py
