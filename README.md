@@ -4,6 +4,14 @@ Interview Mirror is a Python Flask web application for interview practice and re
 
 The project is lightweight and beginner friendly. It runs locally with Python and does not require an external AI API key, database, login system, Whisper transcription, or face tracking.
 
+## Live Demo
+
+Deployment link coming soon.
+
+## Screenshot
+
+App screenshot coming soon.
+
 ## Features
 
 - Python Flask backend
@@ -55,6 +63,15 @@ The project is lightweight and beginner friendly. It runs locally with Python an
 |-- render.yaml
 |-- requirements.txt
 `-- README.md
+```
+
+## Environment Variables
+
+Create a local `.env` file or set these variables in your hosting dashboard:
+
+```env
+SECRET_KEY=change-this-to-a-long-random-value
+FLASK_DEBUG=0
 ```
 
 ## Run Locally
@@ -127,3 +144,7 @@ This repository is a Python project. The `templates/` and `static/` folders cont
 ## Author
 
 Harshita Gautam
+
+## License
+
+This project is licensed under the MIT License.
