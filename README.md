@@ -1,46 +1,33 @@
-# Interview Mirror
+# Interview Mirror - Python Flask App
 
-Interview Mirror is a Flask web app for interview practice and response analysis. It includes a live AI-style practice page where the browser speaks an interview question aloud, records the candidate on camera, captures spoken answer notes when browser speech recognition is available, and gives rule-based feedback after submission.
+Interview Mirror is a Python Flask web application for interview practice and response analysis. It helps candidates rehearse interview answers, record practice responses, and review feedback through a simple dashboard.
 
-The current project is intentionally local and lightweight. It does not require an external AI API key, database, Whisper transcription, face tracking, or user accounts.
+The project is lightweight and beginner friendly. It runs locally with Python and does not require an external AI API key, database, login system, Whisper transcription, or face tracking.
 
-## Current Features
+## Features
 
-- Live interview practice at `/practice`
-- Browser voice prompt for interview questions
-- Role and difficulty based question selection
+- Python Flask backend
+- Live interview practice page at `/practice`
+- Role and difficulty based interview questions
+- Browser voice prompt for questions
 - Camera and microphone recording in supported browsers
-- Optional live speech-to-text notes using browser speech recognition
-- Rule-based answer review with score, strengths, and improvement tips
-- Transcript or recording upload analysis from the home page
-- Dashboard with confidence, communication, sentiment, pace, filler-word, and response-quality metrics
-- Render-compatible deployment files
-
-## How the AI Practice Flow Works
-
-1. Open `/practice`.
-2. Enter the candidate name, target role, and difficulty.
-3. Select **Start Live Interview**.
-4. The browser asks a fresh interview question aloud.
-5. After the spoken question finishes, recording starts.
-6. The candidate answers by speaking on camera.
-7. Browser speech recognition writes answer notes when supported.
-8. Submit the response to receive practice feedback and the next question.
-
-Browsers require a user action before playing speech, so the AI voice starts after the candidate clicks the live interview button.
+- Optional browser speech-to-text notes
+- Rule-based answer feedback with score, strengths, and improvement tips
+- Transcript or recording upload analysis
+- Dashboard for confidence, communication, sentiment, pace, filler words, and response quality
+- Render-ready deployment files
 
 ## Tech Stack
 
 - Python
 - Flask
-- HTML
+- Werkzeug
+- Gunicorn
+- HTML templates
 - CSS
 - JavaScript
 - Bootstrap
 - Chart.js
-- Browser MediaRecorder API
-- Browser SpeechSynthesis API
-- Browser SpeechRecognition API where supported
 
 ## Project Structure
 
@@ -72,46 +59,66 @@ Browsers require a user action before playing speech, so the AI voice starts aft
 
 ## Run Locally
 
+Install dependencies:
+
 ```bash
 pip install -r requirements.txt
+```
+
+Start the Flask app:
+
+```bash
 python app.py
 ```
 
-Open:
+Open the app:
 
 ```text
 http://127.0.0.1:5000
 ```
 
-AI practice page:
+Open the live practice page:
 
 ```text
 http://127.0.0.1:5000/practice
 ```
 
-## Deploy
+## How It Works
 
-This app can be deployed to Python web hosts such as Render, Railway, or a VPS.
+1. Enter the candidate name, role, and difficulty.
+2. Start a live interview session.
+3. The browser speaks an interview question.
+4. The candidate records an answer using camera and microphone.
+5. The app reviews the transcript or recording details.
+6. The dashboard shows feedback and performance metrics.
 
-For Render, use:
+## Deployment
+
+This app can be deployed on Python web hosting platforms such as Render, Railway, or a VPS.
+
+Render settings:
 
 ```text
 Build Command: pip install -r requirements.txt
 Start Command: gunicorn app:app
 ```
 
-Set a production secret:
+Set a production secret key:
 
 ```text
 SECRET_KEY=choose-a-long-random-value
 ```
 
-Camera, microphone, speech recognition, and speech playback work best on secure origins. Public deployments should use HTTPS.
+Camera, microphone, speech recognition, and speech playback work best on HTTPS.
+
+## GitHub Language Note
+
+This repository is a Python project. The `templates/` and `static/` folders contain support files for the Flask UI, so `.gitattributes` is used to keep GitHub's language bar focused on the Python backend.
 
 ## Future Improvements
 
-- Real LLM-backed question generation and feedback
-- Whisper or another speech-to-text model for uploaded recordings
+- LLM-backed interview question generation
+- Speech-to-text transcription for uploaded recordings
 - User login and saved interview history
 - Resume-based interview questions
 - Multilingual practice
