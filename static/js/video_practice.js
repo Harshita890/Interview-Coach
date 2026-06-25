@@ -1,6 +1,7 @@
 const form = document.getElementById("videoPracticeForm");
 const roleInput = document.getElementById("role");
 const difficultyInput = document.getElementById("difficulty");
+const categoryInput = document.getElementById("category");
 const questionInput = document.getElementById("question");
 const liveQuestionText = document.getElementById("liveQuestionText");
 const transcriptInput = document.getElementById("transcript");
@@ -232,6 +233,7 @@ async function loadNewQuestion({ speakAfterLoad = false } = {}) {
   const params = new URLSearchParams({
     role: roleInput.value || "General Interview",
     difficulty: difficultyInput.value || "Beginner",
+    category: categoryInput?.value || "HR",
   });
 
   setStatus("Loading question");
@@ -289,6 +291,10 @@ roleInput?.addEventListener("change", () => {
 });
 
 difficultyInput?.addEventListener("change", () => {
+  loadNewQuestion().catch(() => setStatus("Question unchanged"));
+});
+
+categoryInput?.addEventListener("change", () => {
   loadNewQuestion().catch(() => setStatus("Question unchanged"));
 });
 

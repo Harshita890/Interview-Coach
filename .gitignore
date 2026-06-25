@@ -4,6 +4,7 @@ __pycache__/
 venv/
 instance/
 .env
+interview_mirror.db
 uploads/*
 !uploads/.gitkeep
 .pytest_cache/

@@ -1,4 +1,5 @@
 import random
+import re
 
 from models.analyzer import analyze_interview
 
@@ -7,6 +8,7 @@ class AIInterviewPracticeModel:
     """Local AI interviewer model for question generation and answer review."""
 
     def __init__(self):
+        self.categories = ["HR", "Technical", "Behavioral", "Situational", "Project-Based"]
         self.question_bank = {
             "Beginner": [
                 "Tell me about yourself and why you are interested in the {role} role.",
@@ -27,12 +29,50 @@ class AIInterviewPracticeModel:
                 "Tell me about a failure, what caused it, and how you improved afterward.",
             ],
         }
+        self.category_bank = {
+            "HR": [
+                "Why should we hire you for the {role} role?",
+                "What are your short-term career goals as a {role}?",
+            ],
+            "Technical": [
+                "Explain one technical concept important for a {role} in simple terms.",
+                "How do you debug a technical issue when the first solution does not work?",
+            ],
+            "Behavioral": [
+                "Tell me about a time you received feedback and improved your work.",
+                "Describe a time you had to manage pressure or a tight deadline.",
+            ],
+            "Situational": [
+                "What would you do if you were assigned a task with unclear requirements?",
+                "How would you handle a disagreement with a teammate during a project?",
+            ],
+            "Project-Based": [
+                "Walk me through your strongest project and your personal contribution.",
+                "What was the hardest part of a project you built, and how did you solve it?",
+            ],
+        }
 
-    def generate_question(self, role, difficulty):
-        questions = self.question_bank.get(difficulty, self.question_bank["Beginner"])
+    def generate_question(self, role, difficulty, category=None, resume_text=""):
+        if resume_text:
+            resume_question = self._resume_question(role, resume_text)
+            if resume_question:
+                return resume_question
+
+        if category and category in self.category_bank:
+            questions = self.category_bank[category]
+        else:
+            questions = self.question_bank.get(difficulty, self.question_bank["Beginner"])
         return random.choice(questions).format(role=role)
 
-    def review_answer(self, question, answer, candidate_name, role, difficulty, video_filename=None):
+    def generate_mock_round(self, role, difficulty, resume_text=""):
+        categories = self.categories
+        questions = [
+            self.generate_question(role, difficulty, category=category, resume_text=resume_text if category == "Project-Based" else "")
+            for category in categories
+        ]
+        return list(zip(categories, questions))
+
+    def review_answer(self, question, answer, candidate_name, role, difficulty, category=None, video_filename=None):
         answer_text = answer.strip()
         if not answer_text:
             answer_text = (
@@ -47,12 +87,13 @@ class AIInterviewPracticeModel:
             duration_minutes=None,
         )
         model_feedback = self._model_feedback(answer_text, analysis["metrics"]["response_quality"], video_filename)
-        next_question = self._next_question(role, difficulty, question)
+        next_question = self._next_question(role, difficulty, question, category)
 
         return {
             "candidate_name": candidate_name,
             "role": role,
             "difficulty": difficulty,
+            "category": category,
             "question": question,
             "answer": answer_text,
             "video_filename": video_filename,
@@ -61,8 +102,10 @@ class AIInterviewPracticeModel:
             "next_question": next_question,
         }
 
-    def _next_question(self, role, difficulty, current_question):
-        questions = self.question_bank.get(difficulty, self.question_bank["Beginner"])
+    def _next_question(self, role, difficulty, current_question, category=None):
+        questions = self.category_bank.get(category) if category else None
+        if not questions:
+            questions = self.question_bank.get(difficulty, self.question_bank["Beginner"])
         formatted_questions = [question.format(role=role) for question in questions]
         if current_question in formatted_questions:
             current_index = formatted_questions.index(current_question)
@@ -91,3 +134,27 @@ class AIInterviewPracticeModel:
             feedback.append("Try to answer in 45 to 90 words for a balanced interview response.")
 
         return feedback
+
+    def _resume_question(self, role, resume_text):
+        keywords = self._resume_keywords(resume_text)
+        if not keywords:
+            return None
+
+        topic = random.choice(keywords)
+        return (
+            f"Your resume mentions {topic}. Can you explain how you used it in a project "
+            f"and why it matters for the {role} role?"
+        )
+
+    def _resume_keywords(self, resume_text):
+        common_words = {
+            "and", "the", "for", "with", "from", "this", "that", "have", "about",
+            "using", "work", "project", "skills", "experience", "education",
+        }
+        words = re.findall(r"[A-Za-z][A-Za-z+#.]{2,}", resume_text)
+        keywords = []
+        for word in words:
+            clean = word.strip(".,:;()").lower()
+            if clean not in common_words and clean not in keywords:
+                keywords.append(clean)
+        return [word.title() for word in keywords[:10]]

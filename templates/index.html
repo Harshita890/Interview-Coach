@@ -13,7 +13,13 @@
         <a class="navbar-brand fw-semibold" href="{{ url_for('index') }}">Interview Mirror</a>
         <div class="d-flex gap-2">
           <a class="btn btn-outline-light btn-sm" href="{{ url_for('practice') }}">AI Practice</a>
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('history') }}">History</a>
           <a class="btn btn-outline-light btn-sm" href="{{ url_for('dashboard') }}">Dashboard</a>
+          {% if current_user %}
+            <a class="btn btn-light btn-sm" href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+            <a class="btn btn-light btn-sm" href="{{ url_for('login') }}">Login</a>
+          {% endif %}
         </div>
       </div>
     </nav>

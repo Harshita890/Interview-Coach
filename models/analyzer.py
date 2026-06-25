@@ -114,6 +114,8 @@ def analyze_interview(transcript, candidate_name, role, duration_minutes=None, r
         "strengths": _strengths(confidence_score, communication_score, sentiment, response_quality),
         "improvements": _improvements(speaking_pace, total_fillers, confidence_score, response_quality),
         "recommendations": _recommendations(speaking_pace, total_fillers, confidence_score, response_quality),
+        "stronger_answer": _stronger_answer(text, role),
+        "coaching_focus": _coaching_focus(speaking_pace, total_fillers, confidence_score, response_quality),
     }
 
 
@@ -224,6 +226,41 @@ def _recommendations(speaking_pace, total_fillers, confidence_score, response_qu
     if response_quality < 75:
         recommendations.append("Include numbers, tools, outcomes, or lessons learned in each answer.")
     return recommendations
+
+
+def _stronger_answer(text, role):
+    words = text.split()
+    short_answer = len(words) < 55
+    opening = (
+        f"In my preparation for the {role} role, I would answer by first giving the context, "
+        "then explaining my specific action, and closing with the result."
+    )
+
+    if "result" in text.lower() or "impact" in text.lower():
+        result_line = "I would keep the impact clear and connect it directly to the role."
+    else:
+        result_line = "I would add a measurable result, such as time saved, quality improved, or a problem solved."
+
+    detail_line = (
+        "I would include one concrete project or example so the interviewer can evaluate my skills."
+        if short_answer
+        else "I would keep the strongest example, remove filler words, and make the ending more confident."
+    )
+
+    return f"{opening} {detail_line} {result_line}"
+
+
+def _coaching_focus(speaking_pace, total_fillers, confidence_score, response_quality):
+    focus = []
+    if confidence_score < 75:
+        focus.append({"label": "Confidence", "tip": "Use direct ownership phrases like I built, I solved, and I delivered."})
+    if response_quality < 75:
+        focus.append({"label": "Structure", "tip": "Answer with situation, action, and result in that order."})
+    if speaking_pace < 110 or speaking_pace > 165:
+        focus.append({"label": "Pace", "tip": "Aim for a natural 120 to 150 words per minute."})
+    if total_fillers > 2:
+        focus.append({"label": "Fillers", "tip": "Pause silently instead of saying um, like, or you know."})
+    return focus or [{"label": "Consistency", "tip": "Practice another question and try to keep the same clarity."}]
 
 
 def _clamp(value, minimum=0, maximum=100):

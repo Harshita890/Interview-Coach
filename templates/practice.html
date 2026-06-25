@@ -13,7 +13,13 @@
         <a class="navbar-brand fw-semibold" href="{{ url_for('index') }}">Interview Mirror</a>
         <div class="d-flex gap-2">
           <a class="btn btn-outline-light btn-sm" href="{{ url_for('index') }}">Analyzer</a>
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('history') }}">History</a>
           <a class="btn btn-light btn-sm" href="{{ url_for('practice') }}">AI Practice</a>
+          {% if current_user %}
+            <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+            <a class="btn btn-outline-light btn-sm" href="{{ url_for('login') }}">Login</a>
+          {% endif %}
         </div>
       </div>
     </nav>
@@ -65,6 +71,20 @@
                         <option value="{{ level }}" {% if active_difficulty == level %}selected{% endif %}>{{ level }}</option>
                       {% endfor %}
                     </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="category">Question Category</label>
+                    <select class="form-select" id="category" name="category">
+                      {% set active_category = result.category if result else category %}
+                      {% for item in categories %}
+                        <option value="{{ item }}" {% if active_category == item %}selected{% endif %}>{{ item }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="resume">Resume for Project-Based Questions</label>
+                    <input class="form-control" id="resume" name="resume" type="file" accept=".txt,.md">
+                    <textarea class="form-control mt-2" id="resume_text" name="resume_text" rows="3" placeholder="Or paste resume highlights, skills, or projects here...">{{ resume_text if resume_text else "" }}</textarea>
                   </div>
                   <div class="col-12">
                     <input id="question" name="question" type="hidden" value="{{ result.next_question if result else question }}">
@@ -121,7 +141,7 @@
                   <div>
                     <p class="eyebrow mb-2">AI review</p>
                     <h2 class="h4 mb-1">{{ result.candidate_name }}</h2>
-                    <p class="text-muted mb-0">{{ result.role }} | {{ result.difficulty }}</p>
+                    <p class="text-muted mb-0">{{ result.role }} | {{ result.difficulty }} | {{ result.category }}</p>
                   </div>
                   <div class="score-badge">
                     <span>{{ result.analysis.metrics.overall_score }}</span>
@@ -152,6 +172,11 @@
                     <li>{{ item }}</li>
                   {% endfor %}
                 </ul>
+              </section>
+
+              <section class="panel mb-4">
+                <h2 class="h5 mb-3">Stronger Answer Direction</h2>
+                <p class="transcript mb-0">{{ result.analysis.stronger_answer }}</p>
               </section>
 
               <section class="panel mb-4">
@@ -188,12 +213,21 @@
                 </div>
               </div>
             {% else %}
-              <section class="panel h-100">
+              <section class="panel mb-4">
                 <p class="eyebrow mb-2">Live prompt</p>
                 <h2 class="h4 mb-3">{{ question }}</h2>
                 <p class="text-muted mb-0">
                   Start the live interview on the left. The AI voice will ask this question, then the student answers on camera in real time.
                 </p>
+              </section>
+              <section class="panel">
+                <p class="eyebrow mb-2">Mock interview round</p>
+                <h2 class="h5 mb-3">Five-question practice plan</h2>
+                <ol class="mock-list">
+                  {% for item in mock_round %}
+                    <li><strong>{{ item[0] }}:</strong> {{ item[1] }}</li>
+                  {% endfor %}
+                </ol>
               </section>
             {% endif %}
           </div>

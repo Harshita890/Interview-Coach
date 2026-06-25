@@ -2,7 +2,7 @@
 
 Interview Mirror is a Python Flask web application for interview practice and response analysis. It helps candidates rehearse interview answers, record practice responses, and review feedback through a simple dashboard.
 
-This project is lightweight and beginner friendly. It runs locally with Python and does not require an external AI API key, database, login system, Whisper transcription, or face tracking.
+This project is lightweight and beginner friendly. It runs locally with Python, uses SQLite for saved interview history, and does not require an external AI API key, Whisper transcription, or face tracking.
 
 ## Live Demo
 
@@ -22,6 +22,14 @@ App screenshot coming soon.
 - Optional browser speech-to-text notes
 - Rule-based answer feedback with score, strengths, and improvement tips
 - Transcript or recording upload analysis
+- SQLite database for saved interview sessions
+- Lightweight login and account creation
+- Interview history with progress trend chart
+- Resume or project highlights for tailored questions
+- HR, technical, behavioral, situational, and project-based categories
+- Five-question mock interview round
+- Stronger answer direction after each response
+- Printable report that can be saved as a PDF
 - Dashboard for confidence, communication, sentiment, pace, filler words, and response quality
 - Render-ready deployment files
 
@@ -45,6 +53,7 @@ App screenshot coming soon.
 |-- models/
 |   |-- analyzer.py
 |   |-- ai_interviewer.py
+|   |-- database.py
 |   `-- site_content.py
 |-- static/
 |   |-- css/
@@ -55,7 +64,10 @@ App screenshot coming soon.
 |       `-- video_practice.js
 |-- templates/
 |   |-- dashboard.html
+|   |-- history.html
 |   |-- index.html
+|   |-- login.html
+|   |-- report.html
 |   `-- practice.html
 |-- uploads/
 |   `-- .gitkeep
@@ -103,11 +115,14 @@ http://127.0.0.1:5000/practice
 ## How It Works
 
 1. Enter the candidate name, role, and difficulty.
-2. Start a live interview session.
-3. The browser speaks an interview question.
-4. The candidate records an answer using camera and microphone.
-5. The app reviews the transcript or recording details.
-6. The dashboard shows feedback and performance metrics.
+2. Choose a category or add resume/project highlights.
+3. Start a live interview session or review the five-question mock round.
+4. The browser speaks an interview question.
+5. The candidate records an answer using camera and microphone.
+6. The app reviews the transcript or recording details.
+7. The dashboard shows feedback, a stronger answer direction, and performance metrics.
+8. The SQLite history page saves reports and shows score progress over time.
+9. Open a saved report and use the browser print dialog to save it as a PDF.
 
 ## Deployment
 
@@ -136,8 +151,6 @@ This repository is a Python project. The `templates/` and `static/` folders cont
 
 - LLM-backed interview question generation
 - Speech-to-text transcription for uploaded recordings
-- User login and saved interview history
-- Resume-based interview questions
 - Multilingual practice
 - More detailed video and audio coaching
 

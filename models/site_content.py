@@ -8,13 +8,14 @@ HOME_CONTENT = {
     "chips": [
         "Live Video Practice",
         "AI Voice Questions",
+        "Resume Questions",
+        "Saved History",
+        "PDF Reports",
         "Python Scoring",
-        "Speech Metrics",
-        "Student Feedback",
     ],
     "stats": [
-        {"value": "5", "label": "Core metrics"},
-        {"value": "3", "label": "Difficulty levels"},
+        {"value": "10", "label": "Portfolio features"},
+        {"value": "5", "label": "Question categories"},
         {"value": "50MB", "label": "Recording uploads"},
     ],
 }

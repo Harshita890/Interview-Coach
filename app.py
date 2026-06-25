@@ -7,12 +7,21 @@ from werkzeug.utils import secure_filename
 
 from models.analyzer import analyze_interview
 from models.ai_interviewer import AIInterviewPracticeModel
+from models.database import (
+    create_user,
+    get_interview_session,
+    init_db,
+    list_interview_sessions,
+    save_interview_session,
+    verify_user,
+)
 from models.site_content import DIFFICULTIES, HOME_CONTENT, PRACTICE_DEFAULTS, SAMPLE_TRANSCRIPTS, get_sample_transcript
 
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 ALLOWED_EXTENSIONS = {"mp3", "wav", "m4a", "ogg", "webm", "mp4", "mov"}
+RESUME_EXTENSIONS = {"txt", "md"}
 
 
 app = Flask(__name__)
@@ -21,11 +30,35 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_DIR
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 
 UPLOAD_DIR.mkdir(exist_ok=True)
+init_db()
 interview_model = AIInterviewPracticeModel()
 
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def current_user_id():
+    return session.get("user_id")
+
+
+@app.context_processor
+def inject_user():
+    return {"current_user": session.get("user")}
+
+
+def allowed_resume(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in RESUME_EXTENSIONS
+
+
+def read_resume_text(file_storage):
+    if not file_storage or not file_storage.filename:
+        return ""
+
+    if not allowed_resume(file_storage.filename):
+        return ""
+
+    return file_storage.read().decode("utf-8", errors="ignore")[:5000]
 
 
 def save_recording(file_storage):
@@ -74,6 +107,8 @@ def index():
             duration_minutes=duration_minutes,
             recording_name=saved_filename,
         )
+        session_id = save_interview_session(result, user_id=current_user_id())
+        result["session_id"] = session_id
         session["analysis"] = result
         return redirect(url_for("dashboard"))
 
@@ -94,6 +129,7 @@ def dashboard():
 def practice():
     practice_context = {
         "difficulties": DIFFICULTIES,
+        "categories": interview_model.categories,
         "defaults": PRACTICE_DEFAULTS,
     }
 
@@ -101,13 +137,22 @@ def practice():
         candidate_name = request.form.get("candidate_name", "").strip() or "Candidate"
         role = request.form.get("role", "").strip() or "General Interview"
         difficulty = request.form.get("difficulty", "Beginner")
+        category = request.form.get("category", "HR")
         question = request.form.get("question", "").strip()
         transcript = request.form.get("transcript", "").strip()
+        resume_text = request.form.get("resume_text", "").strip()
+        resume_file = request.files.get("resume")
         video_response = request.files.get("video_response")
         saved_video = save_recording(video_response)
+        resume_text = resume_text or read_resume_text(resume_file)
 
         if not question:
-            question = interview_model.generate_question(role=role, difficulty=difficulty)
+            question = interview_model.generate_question(
+                role=role,
+                difficulty=difficulty,
+                category=category,
+                resume_text=resume_text,
+            )
 
         if not saved_video and not transcript:
             flash("Record or upload a video response before submitting to the AI interviewer.", "warning")
@@ -117,7 +162,9 @@ def practice():
                 candidate_name=candidate_name,
                 role=role,
                 difficulty=difficulty,
+                category=category,
                 question=question,
+                resume_text=resume_text,
             )
 
         practice_result = interview_model.review_answer(
@@ -126,11 +173,26 @@ def practice():
             candidate_name=candidate_name,
             role=role,
             difficulty=difficulty,
+            category=category,
             video_filename=saved_video,
         )
+        practice_result["analysis"]["recording_name"] = saved_video
+        session_id = save_interview_session(
+            practice_result["analysis"],
+            user_id=current_user_id(),
+            difficulty=difficulty,
+            category=category,
+            question=question,
+        )
+        practice_result["analysis"]["session_id"] = session_id
         return render_template("practice.html", result=practice_result, **practice_context)
 
     starter_question = interview_model.generate_question(
+        role=PRACTICE_DEFAULTS["role"],
+        difficulty=PRACTICE_DEFAULTS["difficulty"],
+        category="HR",
+    )
+    mock_round = interview_model.generate_mock_round(
         role=PRACTICE_DEFAULTS["role"],
         difficulty=PRACTICE_DEFAULTS["difficulty"],
     )
@@ -140,7 +202,9 @@ def practice():
         candidate_name=PRACTICE_DEFAULTS["candidate_name"],
         role=PRACTICE_DEFAULTS["role"],
         difficulty=PRACTICE_DEFAULTS["difficulty"],
+        category="HR",
         question=starter_question,
+        mock_round=mock_round,
     )
 
 
@@ -148,13 +212,78 @@ def practice():
 def practice_question():
     role = request.args.get("role", "General Interview").strip() or "General Interview"
     difficulty = request.args.get("difficulty", "Beginner").strip() or "Beginner"
+    category = request.args.get("category", "HR").strip() or "HR"
     return jsonify(
         {
-            "question": interview_model.generate_question(role=role, difficulty=difficulty),
+            "question": interview_model.generate_question(role=role, difficulty=difficulty, category=category),
             "role": role,
             "difficulty": difficulty,
+            "category": category,
         }
     )
+
+
+@app.route("/history")
+def history():
+    sessions = list_interview_sessions(user_id=current_user_id())
+    return render_template("history.html", sessions=sessions)
+
+
+@app.route("/report/<int:session_id>")
+def report(session_id):
+    saved_session = get_interview_session(session_id, user_id=current_user_id())
+    if not saved_session:
+        flash("That saved interview report could not be found.", "warning")
+        return redirect(url_for("history"))
+    return render_template("report.html", saved_session=saved_session, analysis=saved_session["analysis"])
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        user = verify_user(email, password)
+        if not user:
+            flash("Email or password is incorrect.", "danger")
+            return redirect(url_for("login"))
+
+        session["user_id"] = user["id"]
+        session["user"] = {"name": user["name"], "email": user["email"]}
+        flash("Welcome back. Your interview history is ready.", "success")
+        return redirect(url_for("history"))
+
+    return render_template("login.html")
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    name = request.form.get("name", "").strip() or "Candidate"
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
+
+    if not email or len(password) < 6:
+        flash("Use a valid email and a password with at least 6 characters.", "warning")
+        return redirect(url_for("login"))
+
+    try:
+        user_id = create_user(name, email, password)
+    except Exception:
+        flash("That email already has an account. Please log in.", "warning")
+        return redirect(url_for("login"))
+
+    session["user_id"] = user_id
+    session["user"] = {"name": name, "email": email.lower()}
+    flash("Account created. New interview reports will be saved to your history.", "success")
+    return redirect(url_for("practice"))
+
+
+@app.route("/logout")
+def logout():
+    session.pop("user_id", None)
+    session.pop("user", None)
+    flash("You have been logged out.", "info")
+    return redirect(url_for("index"))
 
 
 @app.route("/sample-answer/<sample_key>")

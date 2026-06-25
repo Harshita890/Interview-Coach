@@ -13,7 +13,11 @@
         <a class="navbar-brand fw-semibold" href="{{ url_for('index') }}">Interview Mirror</a>
         <div class="d-flex gap-2">
           <a class="btn btn-outline-light btn-sm" href="{{ url_for('practice') }}">AI Practice</a>
+          <a class="btn btn-outline-light btn-sm" href="{{ url_for('history') }}">History</a>
           <a class="btn btn-outline-light btn-sm" href="{{ url_for('index') }}">New Analysis</a>
+          {% if analysis.session_id %}
+            <a class="btn btn-outline-light btn-sm" href="{{ url_for('report', session_id=analysis.session_id) }}">Report</a>
+          {% endif %}
           <a class="btn btn-light btn-sm" href="{{ url_for('reset') }}">Reset</a>
         </div>
       </div>
@@ -116,6 +120,23 @@
               <ul class="insight-list">
                 {% for item in analysis.recommendations %}
                   <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            </section>
+          </div>
+
+          <div class="col-lg-6">
+            <section class="panel h-100">
+              <h2 class="h5 mb-3">Stronger Answer Direction</h2>
+              <p class="transcript mb-0">{{ analysis.stronger_answer }}</p>
+            </section>
+          </div>
+          <div class="col-lg-6">
+            <section class="panel h-100">
+              <h2 class="h5 mb-3">Coaching Focus</h2>
+              <ul class="insight-list">
+                {% for item in analysis.coaching_focus %}
+                  <li><strong>{{ item.label }}:</strong> {{ item.tip }}</li>
                 {% endfor %}
               </ul>
             </section>
