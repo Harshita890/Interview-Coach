@@ -23,8 +23,8 @@ HOME_CONTENT = {
 DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"]
 
 PRACTICE_DEFAULTS = {
-    "candidate_name": "Harshita Gautam",
-    "role": "Python Developer",
+    "candidate_name": "",
+    "role": "",
     "difficulty": "Beginner",
 }
 

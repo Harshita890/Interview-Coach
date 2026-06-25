@@ -72,6 +72,43 @@ class AIInterviewPracticeModel:
         ]
         return list(zip(categories, questions))
 
+    def generate_interview_round(self, role, difficulty, category="HR", resume_text="", count=7):
+        """Build a complete interview round for the selected focus area."""
+        count = max(6, min(int(count or 7), 7))
+        round_questions = []
+
+        intro_questions = [
+            "Hi {name}, welcome. To begin, please introduce yourself for the {role} role.",
+            "What attracted you to the {role} role, and what makes you a strong fit?",
+        ]
+
+        focus_questions = self.category_bank.get(category, self.category_bank["HR"])
+        general_questions = self.question_bank.get(difficulty, self.question_bank["Beginner"])
+        resume_questions = self._resume_round_questions(role, resume_text)
+
+        if category == "Project-Based" and resume_questions:
+            source_questions = resume_questions + focus_questions + general_questions
+        else:
+            source_questions = focus_questions + resume_questions + general_questions
+
+        source_questions = intro_questions + source_questions
+
+        for question in source_questions:
+            formatted = question.format(role=role, name="{name}")
+            if formatted not in round_questions:
+                round_questions.append(formatted)
+            if len(round_questions) == count:
+                break
+
+        fallback_index = 0
+        while len(round_questions) < count:
+            fallback = general_questions[fallback_index % len(general_questions)].format(role=role)
+            if fallback not in round_questions:
+                round_questions.append(fallback)
+            fallback_index += 1
+
+        return round_questions
+
     def review_answer(self, question, answer, candidate_name, role, difficulty, category=None, video_filename=None):
         answer_text = answer.strip()
         if not answer_text:
@@ -145,6 +182,20 @@ class AIInterviewPracticeModel:
             f"Your resume mentions {topic}. Can you explain how you used it in a project "
             f"and why it matters for the {role} role?"
         )
+
+    def _resume_round_questions(self, role, resume_text):
+        keywords = self._resume_keywords(resume_text)
+        if not keywords:
+            return []
+
+        questions = []
+        for topic in keywords[:4]:
+            questions.append(
+                f"Your CV mentions {topic}. Can you explain where you used it and what result you achieved?"
+            )
+        questions.append(f"Which CV project best proves you are ready for the {role} role, and why?")
+        questions.append("Tell me about one challenge from your CV work and how you handled it.")
+        return questions
 
     def _resume_keywords(self, resume_text):
         common_words = {

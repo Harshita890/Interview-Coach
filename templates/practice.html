@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI Interview Practice</title>
+    <title>Interview Practice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
@@ -28,40 +28,42 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-4">
           <div>
-            <p class="eyebrow mb-2">Real-time AI interviewer</p>
-            <h1 class="h2 mb-1">Live video interview practice.</h1>
+            <p class="eyebrow mb-2">Agent-style AI interviewer</p>
+            <h1 class="h2 mb-1">Start a full live interview room.</h1>
             <p class="text-muted mb-0">
-              The AI asks the question aloud, records the student on camera, captures answer notes in real time, and reviews the response.
+              Add the candidate, target role, round, and CV text. The AI greets the candidate by name and asks a 7-question round from that context.
             </p>
           </div>
           <div class="interview-status" id="interviewStatus">
             <span class="status-dot"></span>
-            <span id="statusText">Ready</span>
+            <span id="statusText">Setup ready</span>
           </div>
         </div>
 
-        <div class="row g-4">
-          <div class="col-lg-5">
-            <section class="panel">
-              <h2 class="h5 mb-3">Interview Setup</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
 
-              {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                  {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
-                  {% endfor %}
-                {% endif %}
-              {% endwith %}
+        <form method="post" enctype="multipart/form-data" id="videoPracticeForm">
+          <input id="question" name="question" type="hidden" value="{{ result.question if result else question }}">
+          <input id="all_questions" name="all_questions" type="hidden" value="{{ result.question if result else "" }}">
 
-              <form method="post" enctype="multipart/form-data" id="videoPracticeForm">
+          <div class="row g-4 align-items-start">
+            <div class="col-lg-5">
+              <section class="panel">
+                <h2 class="h5 mb-3">Interview Setup</h2>
                 <div class="row g-3">
                   <div class="col-md-6">
                     <label class="form-label" for="candidate_name">Candidate Name</label>
-                    <input class="form-control" id="candidate_name" name="candidate_name" value="{{ result.candidate_name if result else candidate_name }}">
+                    <input class="form-control" id="candidate_name" name="candidate_name" placeholder="Enter candidate name" value="{{ result.candidate_name if result else candidate_name }}">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label" for="role">Target Role</label>
-                    <input class="form-control" id="role" name="role" value="{{ result.role if result else role }}">
+                    <input class="form-control" id="role" name="role" placeholder="Example: Data Analyst" value="{{ result.role if result else role }}">
                   </div>
                   <div class="col-12">
                     <label class="form-label" for="difficulty">Difficulty</label>
@@ -73,7 +75,7 @@
                     </select>
                   </div>
                   <div class="col-12">
-                    <label class="form-label" for="category">Question Category</label>
+                    <label class="form-label" for="category">Interview Round</label>
                     <select class="form-select" id="category" name="category">
                       {% set active_category = result.category if result else category %}
                       {% for item in categories %}
@@ -82,156 +84,153 @@
                     </select>
                   </div>
                   <div class="col-12">
-                    <label class="form-label" for="resume">Resume for Project-Based Questions</label>
+                    <label class="form-label" for="resume">CV / Resume Context</label>
                     <input class="form-control" id="resume" name="resume" type="file" accept=".txt,.md">
-                    <textarea class="form-control mt-2" id="resume_text" name="resume_text" rows="3" placeholder="Or paste resume highlights, skills, or projects here...">{{ resume_text if resume_text else "" }}</textarea>
-                  </div>
-                  <div class="col-12">
-                    <input id="question" name="question" type="hidden" value="{{ result.next_question if result else question }}">
-                    <div class="live-question-card" aria-live="polite">
-                      <span class="eyebrow d-block mb-2">AI voice prompt</span>
-                      <p class="live-question-text mb-0" id="liveQuestionText">{{ result.next_question if result else question }}</p>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <div class="d-flex gap-2 flex-wrap">
-                      <button class="btn btn-primary" id="startInterviewButton" type="button">Start Live Interview</button>
-                      <button class="btn btn-outline-primary" id="askQuestionButton" type="button">Speak Question</button>
-                      <button class="btn btn-outline-secondary" id="newQuestionButton" type="button">New Spoken Question</button>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label" for="cameraPreview">Student Video Response</label>
-                    <div class="video-recorder">
-                      <div class="video-stage">
-                        <video id="cameraPreview" class="video-preview" autoplay muted playsinline></video>
-                        <div class="recording-pill d-none" id="recordingPill">
-                          <span class="status-dot"></span>
-                          <span id="recordingTimer">00:00</span>
-                        </div>
-                      </div>
-                      <video id="recordedPreview" class="video-preview d-none" controls></video>
-                      <div class="d-flex gap-2 flex-wrap mt-3">
-                        <button class="btn btn-outline-primary" id="startCameraButton" type="button">Start Camera</button>
-                        <button class="btn btn-outline-danger" id="startRecordingButton" type="button" disabled>Record Answer</button>
-                        <button class="btn btn-outline-secondary" id="stopRecordingButton" type="button" disabled>Stop Answer</button>
-                      </div>
-                    </div>
-                    <input class="form-control mt-3" id="video_response" name="video_response" type="file" accept="video/*">
-                  </div>
-                  <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
-                      <label class="form-label mb-0" for="transcript">Live Answer Notes</label>
-                      <span class="small text-muted" id="speechSupportText">Speech capture checks when interview starts.</span>
-                    </div>
-                    <textarea class="form-control mt-2" id="transcript" name="transcript" rows="5" placeholder="The student's spoken answer appears here in supported browsers. You can also type corrections before submitting."></textarea>
+                    <textarea class="form-control mt-2" id="resume_text" name="resume_text" rows="6" placeholder="Paste CV details, skills, projects, tools, internship, or experience here. The AI will ask from this text.">{{ resume_text if resume_text else "" }}</textarea>
                   </div>
                   <div class="col-12 d-grid">
-                    <button class="btn btn-primary btn-lg" id="submitPracticeButton" type="submit">Submit Response for AI Review</button>
+                    <button class="btn btn-primary btn-lg" id="startInterviewButton" type="button">Enter Interview Room</button>
                   </div>
                 </div>
-              </form>
-            </section>
+              </section>
+            </div>
+
+            <div class="col-lg-7">
+              {% if result %}
+                <section class="panel mb-4">
+                  <div class="d-flex justify-content-between gap-3 flex-wrap">
+                    <div>
+                      <p class="eyebrow mb-2">AI review</p>
+                      <h2 class="h4 mb-1">{{ result.candidate_name }}</h2>
+                      <p class="text-muted mb-0">{{ result.role }} | {{ result.difficulty }} | {{ result.category }}</p>
+                    </div>
+                    <div class="score-badge">
+                      <span>{{ result.analysis.metrics.overall_score }}</span>
+                      <small>Practice Score</small>
+                    </div>
+                  </div>
+                </section>
+
+                <div class="row g-4 mb-4">
+                  <div class="col-md-6">
+                    <div class="stat-card">
+                      <span>{{ result.analysis.metrics.confidence_score }}%</span>
+                      <p>Confidence</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="stat-card">
+                      <span>{{ result.analysis.metrics.communication_score }}%</span>
+                      <p>Communication</p>
+                    </div>
+                  </div>
+                </div>
+
+                <section class="panel mb-4">
+                  <h2 class="h5 mb-3">AI Interviewer Feedback</h2>
+                  <ul class="insight-list">
+                    {% for item in result.model_feedback %}
+                      <li>{{ item }}</li>
+                    {% endfor %}
+                  </ul>
+                </section>
+
+                <section class="panel mb-4">
+                  <h2 class="h5 mb-3">Stronger Answer Direction</h2>
+                  <p class="transcript mb-0">{{ result.analysis.stronger_answer }}</p>
+                </section>
+
+                <section class="panel mb-4">
+                  <h2 class="h5 mb-3">Round Reviewed</h2>
+                  <p class="transcript mb-3">{{ result.question }}</p>
+                  {% if result.video_filename %}
+                    <h3 class="h6">Video Response</h3>
+                    <video class="video-preview mb-3" controls src="{{ url_for('uploaded_file', filename=result.video_filename) }}"></video>
+                  {% endif %}
+                  <h3 class="h6">Answer Notes</h3>
+                  <p class="transcript mb-0">{{ result.answer }}</p>
+                </section>
+              {% else %}
+                <section class="panel data-panel">
+                  <p class="eyebrow mb-2">Where data is saved</p>
+                  <h2 class="h5 mb-3">Practice history is stored locally.</h2>
+                  <p class="text-muted mb-3">
+                    Submitted interview reports are saved in the SQLite database file <strong>interview_mirror.db</strong>.
+                    Video recordings are saved in the <strong>uploads</strong> folder.
+                  </p>
+                  <div class="data-grid">
+                    <div>
+                      <span>Database</span>
+                      <strong>interview_sessions</strong>
+                    </div>
+                    <div>
+                      <span>Videos</span>
+                      <strong>uploads/</strong>
+                    </div>
+                    <div>
+                      <span>Round Length</span>
+                      <strong>7 questions</strong>
+                    </div>
+                    <div>
+                      <span>Question Source</span>
+                      <strong>Role + round + CV</strong>
+                    </div>
+                  </div>
+                </section>
+              {% endif %}
+            </div>
           </div>
 
-          <div class="col-lg-7">
-            {% if result %}
-              <section class="panel mb-4">
-                <div class="d-flex justify-content-between gap-3 flex-wrap">
-                  <div>
-                    <p class="eyebrow mb-2">AI review</p>
-                    <h2 class="h4 mb-1">{{ result.candidate_name }}</h2>
-                    <p class="text-muted mb-0">{{ result.role }} | {{ result.difficulty }} | {{ result.category }}</p>
-                  </div>
-                  <div class="score-badge">
-                    <span>{{ result.analysis.metrics.overall_score }}</span>
-                    <small>Practice Score</small>
-                  </div>
+          <section class="interview-room d-none" id="interviewRoom" aria-live="polite">
+            <div class="interview-room__top">
+              <div>
+                <p class="eyebrow mb-2" id="roomRoundLabel">Live interview</p>
+                <h2 class="h3 mb-0" id="roomCandidateLabel">Candidate Interview</h2>
+              </div>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <div class="interview-status">
+                  <span class="status-dot"></span>
+                  <span id="roomProgressText">Question 1 of 7</span>
                 </div>
-              </section>
+                <button class="btn btn-outline-light" id="exitRoomButton" type="button">Exit Room</button>
+              </div>
+            </div>
 
-              <div class="row g-4 mb-4">
-                <div class="col-md-6">
-                  <div class="stat-card">
-                    <span>{{ result.analysis.metrics.confidence_score }}%</span>
-                    <p>Confidence</p>
+            <div class="interview-room__grid">
+              <div class="interview-video-shell">
+                <div class="video-stage">
+                  <video id="cameraPreview" class="video-preview interview-video" autoplay muted playsinline></video>
+                  <div class="recording-pill d-none" id="recordingPill">
+                    <span class="status-dot"></span>
+                    <span id="recordingTimer">00:00</span>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="stat-card">
-                    <span>{{ result.analysis.metrics.communication_score }}%</span>
-                    <p>Communication</p>
-                  </div>
-                </div>
+                <video id="recordedPreview" class="video-preview d-none" controls></video>
+                <input class="form-control mt-3" id="video_response" name="video_response" type="file" accept="video/*">
               </div>
 
-              <section class="panel mb-4">
-                <h2 class="h5 mb-3">AI Interviewer Feedback</h2>
-                <ul class="insight-list">
-                  {% for item in result.model_feedback %}
-                    <li>{{ item }}</li>
-                  {% endfor %}
-                </ul>
-              </section>
-
-              <section class="panel mb-4">
-                <h2 class="h5 mb-3">Stronger Answer Direction</h2>
-                <p class="transcript mb-0">{{ result.analysis.stronger_answer }}</p>
-              </section>
-
-              <section class="panel mb-4">
-                <h2 class="h5 mb-3">Question Reviewed</h2>
-                <p class="transcript mb-3">{{ result.question }}</p>
-                {% if result.video_filename %}
-                  <h3 class="h6">Video Response</h3>
-                  <video class="video-preview mb-3" controls src="{{ url_for('uploaded_file', filename=result.video_filename) }}"></video>
-                {% endif %}
-                <h3 class="h6">Answer Notes</h3>
-                <p class="transcript mb-0">{{ result.answer }}</p>
-              </section>
-
-              <div class="row g-4">
-                <div class="col-md-6">
-                  <section class="panel h-100">
-                    <h2 class="h5 mb-3">Strengths</h2>
-                    <ul class="insight-list">
-                      {% for item in result.analysis.strengths %}
-                        <li>{{ item }}</li>
-                      {% endfor %}
-                    </ul>
-                  </section>
+              <div class="interview-agent-panel">
+                <p class="eyebrow mb-2">AI interviewer</p>
+                <h3 class="agent-question" id="liveQuestionText">Your live question will appear here.</h3>
+                <div class="d-flex gap-2 flex-wrap">
+                  <button class="btn btn-primary" id="nextQuestionButton" type="button">Next Question</button>
+                  <button class="btn btn-outline-primary" id="repeatQuestionButton" type="button">Repeat</button>
+                  <button class="btn btn-outline-secondary" id="stopRecordingButton" type="button" disabled>Stop Recording</button>
                 </div>
-                <div class="col-md-6">
-                  <section class="panel h-100">
-                    <h2 class="h5 mb-3">Improve Next</h2>
-                    <ul class="insight-list">
-                      {% for item in result.analysis.improvements %}
-                        <li>{{ item }}</li>
-                      {% endfor %}
-                    </ul>
-                  </section>
+                <div class="mt-4">
+                  <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                    <label class="form-label mb-0" for="transcript">Live Answer Notes</label>
+                    <span class="small text-muted" id="speechSupportText">Speech capture starts in the room.</span>
+                  </div>
+                  <textarea class="form-control mt-2" id="transcript" name="transcript" rows="8" placeholder="Live answer notes appear here. You can edit before submitting."></textarea>
+                </div>
+                <div class="d-grid mt-3">
+                  <button class="btn btn-primary btn-lg" id="submitPracticeButton" type="submit">Submit Full Interview for AI Review</button>
                 </div>
               </div>
-            {% else %}
-              <section class="panel mb-4">
-                <p class="eyebrow mb-2">Live prompt</p>
-                <h2 class="h4 mb-3">{{ question }}</h2>
-                <p class="text-muted mb-0">
-                  Start the live interview on the left. The AI voice will ask this question, then the student answers on camera in real time.
-                </p>
-              </section>
-              <section class="panel">
-                <p class="eyebrow mb-2">Mock interview round</p>
-                <h2 class="h5 mb-3">Five-question practice plan</h2>
-                <ol class="mock-list">
-                  {% for item in mock_round %}
-                    <li><strong>{{ item[0] }}:</strong> {{ item[1] }}</li>
-                  {% endfor %}
-                </ol>
-              </section>
-            {% endif %}
-          </div>
-        </div>
+            </div>
+          </section>
+        </form>
       </div>
     </main>
     <script src="{{ url_for('static', filename='js/video_practice.js') }}"></script>

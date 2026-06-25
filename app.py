@@ -139,6 +139,7 @@ def practice():
         difficulty = request.form.get("difficulty", "Beginner")
         category = request.form.get("category", "HR")
         question = request.form.get("question", "").strip()
+        all_questions = request.form.get("all_questions", "").strip()
         transcript = request.form.get("transcript", "").strip()
         resume_text = request.form.get("resume_text", "").strip()
         resume_file = request.files.get("resume")
@@ -147,12 +148,16 @@ def practice():
         resume_text = resume_text or read_resume_text(resume_file)
 
         if not question:
-            question = interview_model.generate_question(
+            round_questions = interview_model.generate_interview_round(
                 role=role,
                 difficulty=difficulty,
                 category=category,
                 resume_text=resume_text,
             )
+            question = "\n".join(round_questions)
+
+        if all_questions:
+            question = all_questions
 
         if not saved_video and not transcript:
             flash("Record or upload a video response before submitting to the AI interviewer.", "warning")
@@ -187,15 +192,6 @@ def practice():
         practice_result["analysis"]["session_id"] = session_id
         return render_template("practice.html", result=practice_result, **practice_context)
 
-    starter_question = interview_model.generate_question(
-        role=PRACTICE_DEFAULTS["role"],
-        difficulty=PRACTICE_DEFAULTS["difficulty"],
-        category="HR",
-    )
-    mock_round = interview_model.generate_mock_round(
-        role=PRACTICE_DEFAULTS["role"],
-        difficulty=PRACTICE_DEFAULTS["difficulty"],
-    )
     return render_template(
         "practice.html",
         **practice_context,
@@ -203,8 +199,8 @@ def practice():
         role=PRACTICE_DEFAULTS["role"],
         difficulty=PRACTICE_DEFAULTS["difficulty"],
         category="HR",
-        question=starter_question,
-        mock_round=mock_round,
+        question="",
+        mock_round=[],
     )
 
 
@@ -216,6 +212,33 @@ def practice_question():
     return jsonify(
         {
             "question": interview_model.generate_question(role=role, difficulty=difficulty, category=category),
+            "role": role,
+            "difficulty": difficulty,
+            "category": category,
+        }
+    )
+
+
+@app.route("/practice/round", methods=["POST"])
+def practice_round():
+    payload = request.get_json(silent=True) or {}
+    candidate_name = payload.get("candidate_name", "").strip() or "Candidate"
+    role = payload.get("role", "").strip() or "General Interview"
+    difficulty = payload.get("difficulty", "Beginner").strip() or "Beginner"
+    category = payload.get("category", "HR").strip() or "HR"
+    resume_text = payload.get("resume_text", "").strip()
+    questions = interview_model.generate_interview_round(
+        role=role,
+        difficulty=difficulty,
+        category=category,
+        resume_text=resume_text,
+        count=7,
+    )
+    questions = [question.replace("{name}", candidate_name) for question in questions]
+    return jsonify(
+        {
+            "greeting": f"Hi {candidate_name}, welcome to your {category} interview for the {role} role.",
+            "questions": questions,
             "role": role,
             "difficulty": difficulty,
             "category": category,
