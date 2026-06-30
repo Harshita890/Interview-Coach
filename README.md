@@ -6,11 +6,11 @@ This project is lightweight and beginner friendly. It runs locally with Python, 
 
 ## Live Demo
 
-Deployment link coming soon.......
+Deployment link coming soon
 
 ## Screenshot
 
-App screenshot coming soon...........
+App screenshot coming soon
 
 ## Features
 
