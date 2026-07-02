@@ -143,16 +143,6 @@ SECRET_KEY=choose-a-long-random-value
 
 Camera, microphone, speech recognition, and speech playback work best on HTTPS.
 
-## Manual GitHub Update Checklist
-
-If you want to update GitHub manually, review these files before committing:
-
-- `app.py` for Flask routes and database-backed interview flow
-- `models/database.py` for SQLite users and saved session storage
-- `templates/history.html`, `templates/login.html`, and `templates/report.html` for new pages
-- `README.md` for feature and setup documentation
-
-Do not upload `interview_mirror.db` to GitHub. The app creates the local SQLite database automatically.
 
 ## GitHub Language Note
 
