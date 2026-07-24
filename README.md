@@ -144,9 +144,9 @@ SECRET_KEY=choose-a-long-random-value
 Camera, microphone, speech recognition, and speech playback work best on HTTPS.
 
 
-## GitHub Language Note
+## Note
 
-This repository is a Python project. The `templates/` and `static/` folders contain support files for the Flask UI, so `.gitattributes` is used to keep GitHub's language bar focused on the Python backend.
+ The `templates/` and `static/` folders contain support files for the Flask UI, so `.gitattributes` is used to keep GitHub's language bar focused on the Python backend.
 
 ## Future Improvements
 
