@@ -1,6 +1,6 @@
-# Interview Mirror 
+# Interview Coach
 
-Interview Mirror is a Python Flask web application for interview practice and response analysis. It helps candidates rehearse interview answers, record practice responses, and review feedback through a simple dashboard.
+Interview Coach is a Python Flask web application for interview practice and response analysis. It helps candidates rehearse interview answers, record practice responses, and review feedback through a simple dashboard.
 
 This project is lightweight and beginner friendly. It runs locally with Python, uses SQLite for saved interview history, and does not require an external AI API key, Whisper transcription, or face tracking.
 
